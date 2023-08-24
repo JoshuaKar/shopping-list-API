@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Add custom CSS styles */
+        .table-custom {
+            width: 50vw; /* Full width */
+            display: flex;
+            flex-direction: column; /* Vertical layout */
+            align-items: flex-start; /* Align items to the start of the flex container */
+        }
+        
+        .table-custom thead {
+            background-color: #f2f2f2; /* Light gray background for table header */
+        }
+        
+        .table-custom th, .table-custom td {
+            padding: 10px; /* Add padding to cells */
+            border: 1px solid #ddd; /* Border for cells */
+        }
+
+        #recipe-table-container{
+            margin-left: 5vw;
+            width: 20vw;
+        }
+    </style>
+</head>
+<body>
+    <form method="get" action="{% url 'recipe-form' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+    </form>
+    <h2>Selected Recipe</h2>
+    <div id="recipe-table-container">
+        <table class="table table-bordered table-custom">
+        <!-- Table will be dynamically added here -->
+        </table>
+    </div>
+    
+    <!-- Include Bootstrap and jQuery scripts -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <script>
+        // Get the JSON data from the template context
+        var recipeData = {{ recipe|safe }};
+        
+        // Get the container element for the table
+        var tableContainer = document.getElementById('recipe-table-container');
+        
+        // Create a Bootstrap table
+        var table = $('<table class="table table-bordered"></table>');
+        
+        // Create table headers
+        var tableHeaders = '<thead><tr><th>Ingredient</th><th>Quantity</th></tr></thead>';
+        
+        // Add headers to the table
+        table.append(tableHeaders);
+        
+        // Create table body
+        var tableBody = '<tbody>';
+        
+        // Iterate through the JSON data and populate the table rows
+        for (var ingredient in recipeData) {
+            var quantity = recipeData[ingredient];
+            tableBody += '<tr><td>' + ingredient + '</td><td>' + quantity + '</td></tr>';
+        }
+        
+        // Close table body
+        tableBody += '</tbody>';
+        
+        // Add table body to the table
+        table.append(tableBody);
+        
+        // Add the table to the container
+        $(tableContainer).append(table);
+    </script>
+</body>
+</html>
